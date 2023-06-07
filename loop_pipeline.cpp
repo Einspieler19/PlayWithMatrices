@@ -18,12 +18,16 @@
 #include "loop_pipeline.h"
 
 void loop_pipeline(din_t A[N], din_t B[M], dout_t C[M*N]) {
+//#pragma HLS ARRAY_PARTITION dim=0 type=complete variable=A
+//#pragma HLS ARRAY_PARTITION dim=0 type=complete variable=B
 
   int i,j;
 //	static dout_t acc;
   
 	LOOP_I:for(i=0; i < N; i++){
+//#pragma HLS PIPELINE
 		LOOP_J: for(j=0; j < M; j++){
+#pragma HLS UNROLL
 			C[M*i+j] = A[i] * B[j];
 		}
 	}

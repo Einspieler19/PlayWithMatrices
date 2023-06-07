@@ -23,12 +23,12 @@
 using namespace std;
 
 #include "ap_int.h"
-#define N 4
-#define M 7
+#define N 2
+#define M 4
 #define NUM_TRANS 20
 
-typedef ap_uint<5>  din_t;
-typedef ap_uint<10> dout_t;
+typedef ap_uint<4>  din_t;
+typedef ap_uint<8> dout_t;
 
 void loop_pipeline(din_t A[N], din_t B[M], dout_t C[M*N]);
 
