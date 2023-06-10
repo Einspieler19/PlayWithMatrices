@@ -1,36 +1,40 @@
-/*
- * Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
- * Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 #include "loop_pipeline.h"
 
-void loop_pipeline(din_t A[N], din_t B[M], dout_t C[M*N]) {
-//#pragma HLS ARRAY_PARTITION dim=0 type=complete variable=A
-//#pragma HLS ARRAY_PARTITION dim=0 type=complete variable=B
+void loop_pipeline(din_t A[N], din_t B[N], dout_t C[N], dout_t D[N]) {
 
-  int i,j;
+#pragma HLS ARRAY_PARTITION dim=0 factor=128 type=cyclic variable=A
+#pragma HLS ARRAY_PARTITION dim=0 factor=128 type=cyclic variable=B
+#pragma HLS ARRAY_PARTITION dim=0 factor=128 type=cyclic variable=C
+//
+//#pragma HLS ARRAY_RESHAPE dim=0 factor=64 type=cyclic variable=A
+//#pragma HLS ARRAY_RESHAPE dim=0 factor=64 type=cyclic variable=B
+//#pragma HLS ARRAY_RESHAPE dim=0 factor=64 type=cyclic variable=C
+
+//#pragma HLS ARRAY_RESHAPE dim=0 type=complete variable=A
+//#pragma HLS ARRAY_RESHAPE dim=0 type=complete variable=B
+//#pragma HLS ARRAY_RESHAPE dim=0 type=complete variable=C
+
+
+	dout_t F[N];
+  int i;
+
+#pragma HLS ARRAY_PARTITION dim=0 factor=128 type=cyclic variable=D
+
+for(i=0; i < N; i++){
+			F[i] = 128*3-i;
+			D[i] = F[i];
+		}
+
+
+
 //	static dout_t acc;
   
+//#pragma HLS PIPELINE
 	LOOP_I:for(i=0; i < N; i++){
 //#pragma HLS PIPELINE
-		LOOP_J: for(j=0; j < M; j++){
-#pragma HLS UNROLL
-			C[M*i+j] = A[i] * B[j];
+#pragma HLS UNROLL factor=2
+			C[i] = A[i] + D[i];
 		}
-	}
-
-//	return acc;
 }
