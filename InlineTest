@@ -1,0 +1,28 @@
+
+
+#include "loop_pipeline.h"
+
+void func(dout_t D[N]){
+
+#pragma HLS INLINE
+
+	dout_t F[N];
+  int i;
+  for(i=0; i < N; i++){
+			F[i] = 128*3-i;
+			D[i] = F[i];
+		}
+}
+
+
+
+void loop_pipeline(din_t A[N], din_t B[N], dout_t C[N], dout_t D[N]) {
+
+	  int i;
+	  func(D);
+
+	  LOOP_I:for(i=0; i < N; i++){
+
+			C[i] = A[i] + D[i];
+		}
+}
